@@ -167,12 +167,7 @@ html,
 body {
   width: 100%;
   max-width: 100%;
-  overflow-x: clip;
-}
-
-@supports not (overflow: clip) {
-  html,
-  body { overflow-x: hidden; }
+  overflow-x: hidden;
 }
 
 .main-content,
@@ -901,7 +896,7 @@ body.sidebar-compact .main-content {
 }
 
 .info-card table:not(.premium-table) {
-  width: 100% !important;
+  width: 100%;
   table-layout: fixed;
 }
 
