@@ -163,6 +163,28 @@ body {
   background-attachment: fixed;
 }
 
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+@supports not (overflow: clip) {
+  html,
+  body { overflow-x: hidden; }
+}
+
+.main-content,
+.page-container {
+  width: 100%;
+  max-width: 100%;
+}
+
+.page-container > * {
+  max-width: 100%;
+}
+
 [data-theme="dark"] body {
   background:
     radial-gradient(1200px 600px at 0% -10%, rgba(99,102,241,0.18), transparent 60%),
@@ -852,13 +874,19 @@ body.sidebar-compact .main-content {
 .table-wrap {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
   box-shadow: var(--shadow-sm);
   background: var(--bg-card);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   backdrop-filter: blur(16px) saturate(180%);
 }
-.premium-table { background: transparent; }
+.premium-table {
+  background: transparent;
+  width: max-content;
+  min-width: 100%;
+}
 .premium-table th {
   background: rgba(15,23,42,0.04);
   font-size: 0.78rem;
@@ -870,6 +898,17 @@ body.sidebar-compact .main-content {
 
 .premium-table tbody tr:hover {
   background: var(--section-accent-soft, rgba(59,130,246,0.06));
+}
+
+.info-card table:not(.premium-table) {
+  width: 100% !important;
+  table-layout: fixed;
+}
+
+.info-card table:not(.premium-table) th,
+.info-card table:not(.premium-table) td {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* ─────────────────────────────────────────
