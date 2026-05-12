@@ -810,3 +810,21 @@ body {
     transform: none;
   }
 }
+
+/* Desktop scroll culling hardening: disable tilt perspective */
+body { perspective: none !important; }
+.has-tilt { transform: none !important; transform-style: flat !important; will-change: auto !important; }
+.has-tilt .hero-block-icon,
+.has-tilt .section-icon,
+.has-tilt h1,
+.has-tilt h2,
+.has-tilt h3,
+.has-tilt h4,
+.has-tilt .quiz-tag,
+.has-tilt .page-hero-tag,
+.has-tilt .badge { transform: none !important; }
+.has-tilt.is-tilting .hero-block-icon { transform: scale(1.04) !important; }
+.has-tilt.is-tilting .section-icon,
+.has-tilt.is-tilting .quiz-tag,
+.has-tilt.is-tilting .page-hero-tag,
+.has-tilt.is-tilting .badge { transform: none !important; }
