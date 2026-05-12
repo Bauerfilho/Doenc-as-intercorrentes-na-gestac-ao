@@ -178,9 +178,11 @@ html, body {
   max-width: 100%;
 }
 html {
+  overflow-x: hidden;
   overflow-x: clip;
 }
 body {
+  overflow-x: hidden;
   overflow-x: clip;
   overscroll-behavior-x: none;
   padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -910,15 +912,12 @@ body.sidebar-compact .main-content {
 .page-container img,
 .page-container svg,
 .page-container canvas,
-.page-container video,
+.page-container video {
+  max-width: 100%;
+  height: auto;
+}
 .page-container iframe {
   max-width: 100%;
-}
-.page-container img,
-.page-container svg,
-.page-container canvas,
-.page-container video {
-  height: auto;
 }
 
 /* ─────────────────────────────────────────
