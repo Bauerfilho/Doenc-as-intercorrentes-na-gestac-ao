@@ -798,3 +798,15 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .quiz-ripple { display: none; }
 }
+
+/* iOS/touch: prevents stuck hover that can push layout horizontally */
+@media (hover: none) {
+  .hero-block:hover,
+  .quiz-option:hover,
+  .resumo-item:hover,
+  .flow-step:hover,
+  .page-nav-btn:hover,
+  .med-card:hover {
+    transform: none;
+  }
+}

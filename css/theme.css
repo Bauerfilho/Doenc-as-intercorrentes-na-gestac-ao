@@ -172,6 +172,28 @@ body {
   background-attachment: fixed;
 }
 
+/* Viewport sizing hardening (iOS/Safari/PWA) */
+html, body {
+  width: 100%;
+  max-width: 100%;
+}
+html {
+  overflow-x: hidden;
+}
+body {
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+/* Prefer clip when available to prevent transformed hover/3D artifacts from
+   creating horizontal scroll on iOS/PWA root viewport; fallback remains hidden. */
+@supports (overflow: clip) {
+  html,
+  body {
+    overflow-x: clip;
+  }
+}
+
 /* Reduzir o gradiente de fundo "page-bg" para integrar com a aurora global */
 .page-bg { opacity: 0.20 !important; }
 [data-theme="dark"] .page-bg { opacity: 0.28 !important; }
@@ -510,12 +532,22 @@ body.sidebar-compact .main-content {
   margin-top: calc(var(--header-height) + var(--sidebar-margin) + 8px);
   min-height: calc(100vh - var(--header-height) - var(--sidebar-margin) - 8px);
   padding-right: var(--sidebar-margin);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   transition: margin-left 0.36s var(--ease-out);
 }
 
 .page-container {
   max-width: 1180px;
+  width: 100%;
+  min-width: 0;
   padding: 28px 24px 80px;
+}
+
+.page-container > * {
+  max-width: 100%;
+  min-width: 0;
 }
 
 /* ─────────────────────────────────────────
@@ -852,13 +884,23 @@ body.sidebar-compact .main-content {
 .table-wrap {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
   box-shadow: var(--shadow-sm);
   background: var(--bg-card);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   backdrop-filter: blur(16px) saturate(180%);
 }
-.premium-table { background: transparent; }
+.premium-table {
+  width: 100%;
+  min-width: max-content;
+  max-width: none;
+  border-collapse: collapse;
+  background: transparent;
+}
 .premium-table th {
   background: rgba(15,23,42,0.04);
   font-size: 0.78rem;
@@ -870,6 +912,18 @@ body.sidebar-compact .main-content {
 
 .premium-table tbody tr:hover {
   background: var(--section-accent-soft, rgba(59,130,246,0.06));
+}
+
+/* Media and embeds should never expand the viewport */
+.page-container img,
+.page-container svg,
+.page-container canvas,
+.page-container video {
+  max-width: 100%;
+  height: auto;
+}
+.page-container iframe {
+  max-width: 100%;
 }
 
 /* ─────────────────────────────────────────
@@ -1002,6 +1056,20 @@ button:focus-visible,
 
   .page-container { padding: 22px 18px 64px; }
   .page-hero { padding: 32px 24px; border-radius: var(--radius-xl); }
+
+  .premium-table th,
+  .premium-table td {
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+
+  .hotspot-popup {
+    left: 50%;
+    top: calc(100% + 8px);
+    transform: translateX(-50%);
+    max-width: min(220px, calc(100vw - 40px));
+  }
 }
 
 @media (max-width: 480px) {
@@ -1010,6 +1078,10 @@ button:focus-visible,
   .header { padding: 0 14px 0 8px; }
   .progress-btn { padding: 7px 11px; font-size: 0.78rem; }
   .progress-btn span:first-child { display: none; }
+
+  .hero-blocks {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ─────────────────────────────────────────
