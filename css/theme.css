@@ -185,6 +185,8 @@ body {
   overscroll-behavior-x: none;
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
+/* Prefer clip when available to prevent transformed hover/3D artifacts from
+   creating horizontal scroll on iOS/PWA root viewport; fallback remains hidden. */
 @supports (overflow: clip) {
   html,
   body {
@@ -893,8 +895,8 @@ body.sidebar-compact .main-content {
   backdrop-filter: blur(16px) saturate(180%);
 }
 .premium-table {
-  width: max-content;
-  min-width: 100%;
+  width: 100%;
+  min-width: max-content;
   max-width: none;
   border-collapse: collapse;
   background: transparent;
