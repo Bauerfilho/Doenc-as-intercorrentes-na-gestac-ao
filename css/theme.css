@@ -179,13 +179,17 @@ html, body {
 }
 html {
   overflow-x: hidden;
-  overflow-x: clip;
 }
 body {
   overflow-x: hidden;
-  overflow-x: clip;
   overscroll-behavior-x: none;
   padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@supports (overflow: clip) {
+  html,
+  body {
+    overflow-x: clip;
+  }
 }
 
 /* Reduzir o gradiente de fundo "page-bg" para integrar com a aurora global */
