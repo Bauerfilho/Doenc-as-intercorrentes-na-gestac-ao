@@ -799,7 +799,7 @@ body {
   .quiz-ripple { display: none; }
 }
 
-/* iOS/touch: evita hover "preso" que empurra layout horizontalmente */
+/* iOS/touch: evita hover "preso" que pode empurrar layout horizontalmente */
 @media (hover: none) {
   .hero-block:hover,
   .quiz-option:hover,

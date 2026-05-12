@@ -1055,7 +1055,7 @@ button:focus-visible,
   .premium-table th,
   .premium-table td {
     white-space: normal;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     word-break: normal;
   }
 
