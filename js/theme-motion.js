@@ -368,3 +368,17 @@
     fullInit();
   }
 })();
+
+
+// Stability: remove motion classes from quizzes after full init
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.quiz-card').forEach(el => {
+      el.classList.remove('has-tilt', 'has-spotlight', 'btn-spotlight', 'is-tilting');
+    });
+  });
+} else {
+  document.querySelectorAll('.quiz-card').forEach(el => {
+    el.classList.remove('has-tilt', 'has-spotlight', 'btn-spotlight', 'is-tilting');
+  });
+}
