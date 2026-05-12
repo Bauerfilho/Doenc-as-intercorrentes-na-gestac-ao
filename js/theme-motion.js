@@ -382,3 +382,37 @@ if (document.readyState === 'loading') {
     el.classList.remove('has-tilt', 'has-spotlight', 'btn-spotlight', 'is-tilting');
   });
 }
+
+// QUIZ stability: strip motion classes even if added later (MutationObserver)
+(function () {
+  const strip = (root) => {
+    if (!root) return;
+    const nodes = root instanceof Element && root.matches('.quiz-card')
+      ? [root]
+      : (root.querySelectorAll ? root.querySelectorAll('.quiz-card') : []);
+    nodes.forEach((el) => {
+      el.classList.remove('has-tilt', 'has-spotlight', 'btn-spotlight', 'is-tilting');
+    });
+  };
+
+  strip(document);
+
+  try {
+    const obs = new MutationObserver((muts) => {
+      for (const m of muts) {
+        if (m.type === 'childList') {
+          m.addedNodes.forEach((n) => strip(n));
+        }
+        if (m.type === 'attributes') strip(m.target);
+      }
+    });
+    obs.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class']
+    });
+  } catch (e) {
+    // ignore
+  }
+})();
