@@ -97,7 +97,7 @@ class GORouter {
   }
 
   _renderError(page, error) {
-    const detail = error && error.message ? error.message : 'Erro não identificado';
+    const detail = error?.message ?? 'Erro não identificado';
     return `<div class="page-hero" style="--grad-current:${GRAD_MAP[page.grad] || GRAD_MAP.revisao}">
       <span class="page-hero-tag">⚠️ ${this._blockLabel(page.block)}</span>
       <h1>${page.label}</h1>
