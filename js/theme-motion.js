@@ -29,6 +29,9 @@
 
   const BTN_SPOT_SELECTOR =
     '.sim-btn, .page-nav-btn, .progress-btn, .quiz-reveal-btn';
+  const spotBound = new WeakSet();
+  const tiltBound = new WeakSet();
+  const btnSpotBound = new WeakSet();
 
   /* Tilt: limites e suavização */
   const TILT_MAX = 6;          /* graus máx em cada eixo */
@@ -93,8 +96,8 @@
      economizar paint (uma atualização por frame)
   ───────────────────────────────────────── */
   function bindSpotlight(el) {
-    if (el.dataset.motionSpotBound === '1') return;
-    el.dataset.motionSpotBound = '1';
+    if (spotBound.has(el)) return;
+    spotBound.add(el);
     let rafId = null;
     let pendingX = 50, pendingY = 50;
 
@@ -126,8 +129,8 @@
      local) para reduzir overhead.
   ───────────────────────────────────────── */
   function bindTilt(el) {
-    if (el.dataset.motionTiltBound === '1') return;
-    el.dataset.motionTiltBound = '1';
+    if (tiltBound.has(el)) return;
+    tiltBound.add(el);
     let rafId = null;
     let pendingRX = 0, pendingRY = 0;
     const isHero = el.classList.contains('hero-block');
@@ -164,8 +167,8 @@
      BOTÕES — spotlight ao cursor
   ───────────────────────────────────────── */
   function bindBtnSpotlight(el) {
-    if (el.dataset.motionBtnSpotBound === '1') return;
-    el.dataset.motionBtnSpotBound = '1';
+    if (btnSpotBound.has(el)) return;
+    btnSpotBound.add(el);
     el.addEventListener('mousemove', (e) => {
       const r = el.getBoundingClientRect();
       const x = ((e.clientX - r.left) / r.width)  * 100;

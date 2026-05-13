@@ -105,7 +105,9 @@ function createSpaTestEnv(options = {}) {
   window.scrollTo = () => {};
   window.router = { navigate() {} };
   window.closeSidebar = () => {};
-  window.setTimeout = (fn) => timers.setTimeout(fn);
+  window.setTimeout = (fn, _delay, ...args) => timers.setTimeout(() => {
+    if (typeof fn === 'function') fn(...args);
+  });
   window.clearTimeout = (id) => timers.clearTimeout(id);
   window.matchMedia = (query) => ({
     media: query,
