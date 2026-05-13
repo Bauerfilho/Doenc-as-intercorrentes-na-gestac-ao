@@ -60,11 +60,16 @@ class GORouter {
 
     requestAnimationFrame(() => {
       const fn = window.GO_RENDER && window.GO_RENDER[page.id];
-      if (fn) {
-        container.innerHTML = '';
-        fn(container, page);
-      } else {
-        container.innerHTML = this._fallback(page);
+      try {
+        if (fn) {
+          container.innerHTML = '';
+          fn(container, page);
+        } else {
+          container.innerHTML = this._fallback(page);
+        }
+      } catch (error) {
+        console.error(`[GORouter] Falha ao renderizar a página "${page.id}"`, error);
+        container.innerHTML = this._renderError(page, error);
       }
       window.scrollTo({ top: 0, behavior: 'instant' });
       this._attachPageLinks(container);
@@ -88,6 +93,19 @@ class GORouter {
       <span class="page-hero-tag">📖 ${this._blockLabel(page.block)}</span>
       <h1>${page.label}</h1>
       <p class="subtitle">Conteúdo em construção...</p>
+    </div>`;
+  }
+
+  _renderError(page, error) {
+    const detail = error?.message ?? 'Erro não identificado';
+    return `<div class="page-hero" style="--grad-current:${GRAD_MAP[page.grad] || GRAD_MAP.revisao}">
+      <span class="page-hero-tag">⚠️ ${this._blockLabel(page.block)}</span>
+      <h1>${page.label}</h1>
+      <p class="subtitle">Falha técnica ao carregar esta página.</p>
+      <div class="alert warning" style="margin-top:20px;">
+        <strong>Detalhe técnico:</strong> ${detail}<br />
+        Verifique o console para o stack trace completo.
+      </div>
     </div>`;
   }
 
