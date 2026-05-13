@@ -126,11 +126,8 @@
   }
 
   /* --------------------------------------
-     5. Smooth-scroll ao trocar de página
+     5. O scroll para o topo na troca de página
+        é gerenciado pelo router (behavior: instant).
+        Não duplicamos aqui para evitar conflito.
   -------------------------------------- */
-  if (typeof window !== 'undefined') {
-    window.addEventListener('hashchange', () => {
-      try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (_) { window.scrollTo(0, 0); }
-    });
-  }
 })();

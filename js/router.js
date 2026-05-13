@@ -6,6 +6,7 @@ class GORouter {
   constructor() {
     this.currentPage = null;
     this.handlers = {};
+    this._rafId = null;
     this._init();
   }
 
@@ -32,48 +33,52 @@ class GORouter {
   }
 
   _render(page) {
-    // Atualizar nav (novo sistema de cards)
-    if (window.GO_UPDATE_NAV) window.GO_UPDATE_NAV(page.id);
-
-    // Atualizar breadcrumb
+    // Atualizar breadcrumb, gradiente e título imediatamente (operações leves)
     const bc = document.getElementById('header-breadcrumb');
     if (bc) bc.textContent = `${this._blockLabel(page.block)} › ${page.label}`;
 
-    // Atualizar fundo gradiente
     const bg = document.getElementById('page-bg');
     if (bg) {
       bg.style.background = GRAD_MAP[page.grad] || GRAD_MAP.revisao;
       bg.style.backgroundSize = '400% 400%';
     }
 
-    // Atualizar título da aba
     document.title = `${page.label} — GO Premium`;
 
-    // Spinner de carregamento
     const container = document.getElementById('page-container');
     if (!container) return;
-    container.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:center;min-height:40vh;flex-direction:column;gap:16px;">
-        <div class="spinner"></div>
-        <span style="font-size:var(--text-sm);color:var(--text-muted)">Carregando...</span>
-      </div>`;
 
-    requestAnimationFrame(() => {
-      const fn = window.GO_RENDER && window.GO_RENDER[page.id];
+    // Cancelar render pendente se o usuário navegou rápido
+    if (this._rafId !== null) {
+      cancelAnimationFrame(this._rafId);
+      this._rafId = null;
+    }
+    const targetPage = page;
+
+    this._rafId = requestAnimationFrame(() => {
+      this._rafId = null;
+
+      const fn = window.GO_RENDER && window.GO_RENDER[targetPage.id];
       try {
+        container.innerHTML = '';
         if (fn) {
-          container.innerHTML = '';
-          fn(container, page);
+          fn(container, targetPage);
         } else {
-          container.innerHTML = this._fallback(page);
+          container.innerHTML = this._fallback(targetPage);
         }
       } catch (error) {
-        console.error(`[GORouter] Falha ao renderizar a página "${page.id}"`, error);
-        container.innerHTML = this._renderError(page, error);
+        console.error(`[GORouter] Falha ao renderizar a página "${targetPage.id}"`, error);
+        container.innerHTML = this._renderError(targetPage, error);
       }
+
+      // Rolar para o topo após renderizar (uma única vez)
       window.scrollTo({ top: 0, behavior: 'instant' });
+
+      // Atualizar nav uma única vez, após o conteúdo estar pronto
+      if (window.GO_UPDATE_NAV) window.GO_UPDATE_NAV(targetPage.id);
+
       this._attachPageLinks(container);
-      this._markVisited(page.id);
+      this._markVisited(targetPage.id);
       this._updateProgress();
     });
   }
@@ -122,8 +127,6 @@ class GORouter {
     const pct = Math.round((visited.length / GO_PAGES.length) * 100);
     const lbl = document.getElementById('progress-label');
     if (lbl) lbl.textContent = pct + '%';
-    // Também atualiza via GO_UPDATE_NAV se disponível
-    if (window.GO_UPDATE_NAV) window.GO_UPDATE_NAV(this.currentPage);
   }
 }
 
