@@ -18,13 +18,13 @@
      - itens dentro do modal
   ───────────────────────────────────────── */
   const SPOT_SELECTOR =
-    '.glass-card, .simulator-card, .quiz-card, .calc-card, ' +
+    '.glass-card, .simulator-card, .calc-card, ' +
     '.classifier, .diagram-wrap, .mindmap-wrap, .axis-diagram, ' +
     '.parto-card, .versus-card, .mind-map, .lab-ruler, ' +
     '.score-display, .hero-block, .info-card';
 
   const TILT_SELECTOR =
-    '.glass-card, .simulator-card, .quiz-card, .calc-card, ' +
+    '.glass-card, .simulator-card, .calc-card, ' +
     '.hero-block, .score-display, .versus-card';
 
   const BTN_SPOT_SELECTOR =
@@ -48,15 +48,19 @@
            r.right > 0  && r.left < window.innerWidth;
   }
 
+  function getMotionRoot() {
+    return document.getElementById('page-container') || document;
+  }
+
   /* ─────────────────────────────────────────
      APLICAR CLASSES (após cada navegação SPA)
      Como o conteúdo é renderizado via router,
      precisamos reaplicar as classes/handlers
      a cada troca de página.
   ───────────────────────────────────────── */
-  function applyMotionClasses() {
+  function applyMotionClasses(root = getMotionRoot()) {
     /* Spotlight */
-    document.querySelectorAll(SPOT_SELECTOR).forEach(el => {
+    root.querySelectorAll(SPOT_SELECTOR).forEach(el => {
       if (isInsideExcluded(el)) return;
       if (!el.classList.contains('has-spotlight')) {
         el.classList.add('has-spotlight');
@@ -65,7 +69,7 @@
     });
 
     /* Tilt 3D */
-    document.querySelectorAll(TILT_SELECTOR).forEach(el => {
+    root.querySelectorAll(TILT_SELECTOR).forEach(el => {
       if (isInsideExcluded(el)) return;
       if (!el.classList.contains('has-tilt')) {
         el.classList.add('has-tilt');
@@ -74,7 +78,7 @@
     });
 
     /* Botões spotlight */
-    document.querySelectorAll(BTN_SPOT_SELECTOR).forEach(el => {
+    root.querySelectorAll(BTN_SPOT_SELECTOR).forEach(el => {
       if (isInsideExcluded(el)) return;
       if (!el.classList.contains('btn-spotlight')) {
         el.classList.add('btn-spotlight');
@@ -89,6 +93,8 @@
      economizar paint (uma atualização por frame)
   ───────────────────────────────────────── */
   function bindSpotlight(el) {
+    if (el.dataset.motionSpotBound === '1') return;
+    el.dataset.motionSpotBound = '1';
     let rafId = null;
     let pendingX = 50, pendingY = 50;
 
@@ -120,6 +126,8 @@
      local) para reduzir overhead.
   ───────────────────────────────────────── */
   function bindTilt(el) {
+    if (el.dataset.motionTiltBound === '1') return;
+    el.dataset.motionTiltBound = '1';
     let rafId = null;
     let pendingRX = 0, pendingRY = 0;
     const isHero = el.classList.contains('hero-block');
@@ -156,6 +164,8 @@
      BOTÕES — spotlight ao cursor
   ───────────────────────────────────────── */
   function bindBtnSpotlight(el) {
+    if (el.dataset.motionBtnSpotBound === '1') return;
+    el.dataset.motionBtnSpotBound = '1';
     el.addEventListener('mousemove', (e) => {
       const r = el.getBoundingClientRect();
       const x = ((e.clientX - r.left) / r.width)  * 100;
@@ -207,10 +217,11 @@
        mas NÃO instalamos os listeners de mousemove
        — economiza memória e evita execução desnecessária */
     function lightApply() {
-      document.querySelectorAll(SPOT_SELECTOR).forEach(el => {
+      const root = getMotionRoot();
+      root.querySelectorAll(SPOT_SELECTOR).forEach(el => {
         if (!isInsideExcluded(el)) el.classList.add('has-spotlight');
       });
-      document.querySelectorAll(TILT_SELECTOR).forEach(el => {
+      root.querySelectorAll(TILT_SELECTOR).forEach(el => {
         if (!isInsideExcluded(el)) el.classList.add('has-tilt');
       });
     }
@@ -235,7 +246,7 @@
      ganha .is-reading, com pulso suave.
   ========================================= */
   const READING_SELECTOR =
-    '.glass-card, .simulator-card, .quiz-card, .calc-card, ' +
+    '.glass-card, .simulator-card, .calc-card, ' +
     '.classifier, .diagram-wrap, .mindmap-wrap, .axis-diagram, ' +
     '.parto-card, .versus-card, .mind-map, .lab-ruler, ' +
     '.score-display, .info-card';
@@ -294,7 +305,7 @@
     });
 
     /* Observar todos os cards visíveis */
-    document.querySelectorAll(READING_SELECTOR).forEach(el => {
+    getMotionRoot().querySelectorAll(READING_SELECTOR).forEach(el => {
       if (!isInsideExcluded(el)) readingObserver.observe(el);
     });
   }
@@ -366,53 +377,5 @@
     document.addEventListener('DOMContentLoaded', fullInit);
   } else {
     fullInit();
-  }
-})();
-
-
-// Stability: remove motion classes from quizzes after full init
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.quiz-card').forEach(el => {
-      el.classList.remove('has-tilt', 'has-spotlight', 'btn-spotlight', 'is-tilting');
-    });
-  });
-} else {
-  document.querySelectorAll('.quiz-card').forEach(el => {
-    el.classList.remove('has-tilt', 'has-spotlight', 'btn-spotlight', 'is-tilting');
-  });
-}
-
-// QUIZ stability: strip motion classes even if added later (MutationObserver)
-(function () {
-  const strip = (root) => {
-    if (!root) return;
-    const nodes = root instanceof Element && root.matches('.quiz-card')
-      ? [root]
-      : (root.querySelectorAll ? root.querySelectorAll('.quiz-card') : []);
-    nodes.forEach((el) => {
-      el.classList.remove('has-tilt', 'has-spotlight', 'btn-spotlight', 'is-tilting');
-    });
-  };
-
-  strip(document);
-
-  try {
-    const obs = new MutationObserver((muts) => {
-      for (const m of muts) {
-        if (m.type === 'childList') {
-          m.addedNodes.forEach((n) => strip(n));
-        }
-        if (m.type === 'attributes') strip(m.target);
-      }
-    });
-    obs.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['class']
-    });
-  } catch (e) {
-    // ignore
   }
 })();

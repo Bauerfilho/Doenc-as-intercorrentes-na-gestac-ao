@@ -314,6 +314,7 @@
   ───────────────────────────────────────── */
   window.GO_QUIZ = function (container, questions) {
     const section = document.createElement('div');
+    const quizRenderId = ++_quizRenderCounter;
     section.className = 'quiz-section';
     section.innerHTML = `
       <div class="quiz-header">
@@ -324,6 +325,7 @@
 
     questions.forEach((q, qi) => {
       const card = document.createElement('div');
+      const feedbackId = `qfb-${quizRenderId}-${qi}`;
       card.className = 'quiz-card anim-fade-up';
       card.style.animationDelay = (qi * 0.09) + 's';
 
@@ -337,7 +339,7 @@
               <span>${opt}</span>
             </button>`).join('')}
         </div>
-        <div class="quiz-feedback" id="qfb-${pageQIndex(qi)}"></div>`;
+        <div class="quiz-feedback" id="${feedbackId}"></div>`;
 
       card.querySelectorAll('.quiz-option').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -350,7 +352,7 @@
             if (bi === correct)              b.classList.add('correct');
             else if (bi === oi && oi !== correct) b.classList.add('wrong');
           });
-          const fb = document.getElementById(`qfb-${pageQIndex(qi)}`);
+          const fb = document.getElementById(feedbackId);
           if (fb) {
             const ok = oi === correct;
             fb.className = `quiz-feedback show ${ok ? 'correct-feedback' : 'wrong-feedback'}`;
@@ -369,9 +371,6 @@
   };
 
   /* ID único para feedbacks de quiz por página */
-  let _qCounter = 0;
-  function pageQIndex(qi) {
-    return `${Date.now()}_${qi}_${_qCounter++}`;
-  }
+  let _quizRenderCounter = 0;
 
 })();

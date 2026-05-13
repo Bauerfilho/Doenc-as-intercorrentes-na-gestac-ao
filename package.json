@@ -1,0 +1,27 @@
+{
+  "name": "doenc-as-intercorrentes-na-gestac-ao",
+  "version": "1.0.0",
+  "description": "> Plataforma premium de estudo ativo para residência médica em Obstetrícia e Ginecologia",
+  "main": "sw.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bauerfilho/Doenc-as-intercorrentes-na-gestac-ao.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Bauerfilho/Doenc-as-intercorrentes-na-gestac-ao/issues"
+  },
+  "homepage": "https://github.com/Bauerfilho/Doenc-as-intercorrentes-na-gestac-ao#readme",
+  "devDependencies": {
+    "linkedom": "^0.18.12"
+  }
+}
