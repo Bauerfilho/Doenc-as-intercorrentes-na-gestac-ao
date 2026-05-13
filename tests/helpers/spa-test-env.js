@@ -36,9 +36,9 @@ function createTimers() {
     clearTimeout(id) {
       pending.delete(id);
     },
-    runAll(limit = 50) {
+    runAll(maxIterations = 50) {
       let runs = 0;
-      while (pending.size && runs < limit) {
+      while (pending.size && runs < maxIterations) {
         const entries = Array.from(pending.entries());
         pending.clear();
         entries.forEach(([, fn]) => {

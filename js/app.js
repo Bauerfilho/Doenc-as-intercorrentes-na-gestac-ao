@@ -314,7 +314,7 @@
   ───────────────────────────────────────── */
   window.GO_QUIZ = function (container, questions) {
     const section = document.createElement('div');
-    const quizRenderId = ++_quizRenderCounter;
+    const quizInstanceId = ++_quizRenderCounter;
     section.className = 'quiz-section';
     section.innerHTML = `
       <div class="quiz-header">
@@ -325,7 +325,7 @@
 
     questions.forEach((q, qi) => {
       const card = document.createElement('div');
-      const feedbackId = `qfb-${quizRenderId}-${qi}`;
+      const feedbackId = `qfb-${quizInstanceId}-${qi}`;
       card.className = 'quiz-card anim-fade-up';
       card.style.animationDelay = (qi * 0.09) + 's';
 
