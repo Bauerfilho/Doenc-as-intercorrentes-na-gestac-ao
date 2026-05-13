@@ -314,7 +314,7 @@
   ───────────────────────────────────────── */
   window.GO_QUIZ = function (container, questions) {
     const section = document.createElement('div');
-    const quizInstanceId = ++_quizRenderCounter;
+    const quizInstanceId = _quizRenderCounter++;
     section.className = 'quiz-section';
     section.innerHTML = `
       <div class="quiz-header">
